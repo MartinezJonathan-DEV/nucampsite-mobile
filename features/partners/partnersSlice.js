@@ -10,7 +10,7 @@ export const fetchPartners = createAsyncThunk(
       return Promise.reject("Unable to fetch status: " + response.status);
     }
 
-    const data = response.json();
+    const data = await response.json();
     return data;
   }
 );
@@ -21,7 +21,9 @@ const partnersSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPartners.pending, (state) => (isLoading = true))
+      .addCase(fetchPartners.pending, (state) => {
+        state.isLoading = true;
+      })
       .addCase(fetchPartners.fulfilled, (state, action) => {
         state.isLoading = false;
         state.errMess = null;
