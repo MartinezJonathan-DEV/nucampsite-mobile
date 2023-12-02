@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { baseUrl } from "../../shared/baseUrl";
 
+// Async thunk for fetching comments from the server.
 export const fetchComments = createAsyncThunk(
   "comments/fetchComments",
   async () => {
@@ -13,10 +14,33 @@ export const fetchComments = createAsyncThunk(
   }
 );
 
+// Async thunk for simulating a delayed post of a comment.
+export const postComment = createAsyncThunk(
+  "comments/postComment",
+  async (payload, { dispatch, getState }) => {
+    setTimeout(() => {
+      const { comments } = getState();
+      payload.id = comments.commentsArray.length;
+
+      const date = new Date();
+      payload.date = date.toISOString();
+
+      dispatch(addComment(payload));
+    }, 2000);
+  }
+);
+
+// Redux slice for managing comments state.
 const commentsSlice = createSlice({
   name: "comments",
   initialState: { isLoading: true, errMess: null, commentsArray: [] },
-  reducers: {},
+  reducers: {
+    addComment: (state, action) => {
+      const newComment = action.payload;
+
+      state.commentsArray.push(newComment);
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchComments.pending, (state) => {
@@ -35,3 +59,4 @@ const commentsSlice = createSlice({
 });
 
 export const commentsReducer = commentsSlice.reducer;
+export const { addComment } = commentsSlice.actions;
