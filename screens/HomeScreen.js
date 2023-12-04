@@ -1,7 +1,8 @@
-import { Animated, Text, View } from "react-native";
+import { Animated, ScrollView, Text, View } from "react-native";
 import { Card } from "react-native-elements";
 import { useSelector } from "react-redux";
 import { useEffect, useRef } from "react";
+import * as Animatable from "react-native-animatable";
 import { baseUrl } from "../shared/baseUrl";
 import Loading from "../components/LoadingComponent";
 
@@ -58,23 +59,25 @@ const HomeScreen = () => {
   }, []);
 
   return (
-    <Animated.ScrollView style={{ transform: [{ scale: scaleValue }] }}>
-      <FeaturedItem
-        item={featCampsite}
-        isLoading={campsites.isLoading}
-        errMess={campsites.errMess}
-      />
-      <FeaturedItem
-        item={featPromotion}
-        isLoading={promotions.isLoading}
-        errMess={promotions.errMess}
-      />
-      <FeaturedItem
-        item={featPartner}
-        isLoading={partners.isLoading}
-        errMess={partners.errMess}
-      />
-    </Animated.ScrollView>
+    <ScrollView>
+      <Animatable.View animation="zoomIn" duration={2000} delay={1000}>
+        <FeaturedItem
+          item={featCampsite}
+          isLoading={campsites.isLoading}
+          errMess={campsites.errMess}
+        />
+        <FeaturedItem
+          item={featPromotion}
+          isLoading={promotions.isLoading}
+          errMess={promotions.errMess}
+        />
+        <FeaturedItem
+          item={featPartner}
+          isLoading={partners.isLoading}
+          errMess={partners.errMess}
+        />
+      </Animatable.View>
+    </ScrollView>
   );
 };
 
