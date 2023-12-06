@@ -7,7 +7,7 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
-import CampsiteInfoScreen from "./CampsitesInfoScreen";
+import CampsiteInfoScreen from "./CampsiteInfoScreen";
 import DirectoryScreen from "./DirectoryScreen";
 import HomeScreen from "./HomeScreen";
 import AboutScreen from "./AboutScreen";
