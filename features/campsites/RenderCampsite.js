@@ -8,6 +8,7 @@ import { baseUrl } from "../../shared/baseUrl";
 const RenderCampsite = (props) => {
   const { campsite } = props;
 
+  // Create a useRef to reference the Animatable.View component
   const view = useRef();
 
   // Function to check if the gesture is a left swipe
@@ -16,7 +17,10 @@ const RenderCampsite = (props) => {
   // PanResponder setup for handling gestures
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
+
+    // Trigger an animation when the gesture starts
     onPanResponderGrant: () => {
+      // Apply the rubberBand animation to the component
       view.current
         .rubberBand(1000)
         .then((endState) =>
