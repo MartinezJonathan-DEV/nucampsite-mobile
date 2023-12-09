@@ -11,8 +11,9 @@ const RenderCampsite = (props) => {
   // Create a useRef to reference the Animatable.View component
   const view = useRef();
 
-  // Function to check if the gesture is a left swipe
+  // Functions to check gesture
   const isLeftSwipe = ({ dx }) => dx < -200;
+  const isRightSwipe = ({ dx }) => dx > 200;
 
   // PanResponder setup for handling gestures
   const panResponder = PanResponder.create({
@@ -51,6 +52,10 @@ const RenderCampsite = (props) => {
           ],
           { cancelable: false }
         );
+        // Check for swipe right
+      } else if (isRightSwipe(gestureState)) {
+        // call the onShowModal function
+        props.onShowModal();
       }
     },
   });
