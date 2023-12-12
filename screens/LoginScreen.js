@@ -3,15 +3,20 @@ import { View, Button, StyleSheet } from "react-native";
 import { CheckBox, Input } from "react-native-elements";
 import * as SecureStore from "expo-secure-store";
 
+// LoginScreen component handles user login input and authentication.
 const LoginScreen = () => {
+  // State variables to manage username, password, and "Remember Me" checkbox status.
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
 
+  // Handle login button press.
   const handleLogin = () => {
     console.log("username:", username);
     console.log("password:", password);
     console.log("remember:", remember);
+
+    // Save or delete user info based on "Remember Me" status.
     if (remember) {
       SecureStore.setItemAsync(
         "userinfo",
@@ -27,6 +32,7 @@ const LoginScreen = () => {
     }
   };
 
+  // Load stored user info when component mounts.
   useEffect(() => {
     SecureStore.getItemAsync("userinfo").then((userdata) => {
       const userinfo = JSON.parse(userdata);
@@ -38,6 +44,7 @@ const LoginScreen = () => {
     });
   }, []);
 
+  // Render the login form.
   return (
     <View style={styles.container}>
       <Input
@@ -70,6 +77,7 @@ const LoginScreen = () => {
   );
 };
 
+// Styles for the LoginScreen component.
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",

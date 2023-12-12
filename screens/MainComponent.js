@@ -1,3 +1,5 @@
+// Importing required modules and components
+import { useEffect } from "react";
 import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import Constants from "expo-constants";
 import { createStackNavigator } from "@react-navigation/stack";
@@ -7,6 +9,9 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
+import logo from "../assets/images/logo.png";
+
+// Importing screen components
 import CampsiteInfoScreen from "./CampsiteInfoScreen";
 import DirectoryScreen from "./DirectoryScreen";
 import HomeScreen from "./HomeScreen";
@@ -15,21 +20,24 @@ import ContactScreen from "./ContactScreen";
 import ReservationScreen from "./ReservationScreen";
 import FavoritesScreen from "./FavoritesScreen";
 import LoginScreen from "./LoginScreen";
-import logo from "../assets/images/logo.png";
+
+// Importing Redux-related functions
 import { fetchPartners } from "../features/partners/partnersSlice";
 import { fetchCampsites } from "../features/campsites/campsitesSlice";
 import { fetchPromotions } from "../features/promotions/promotionsSlice";
 import { fetchComments } from "../features/comments/commentsSlice";
 import { useDispatch } from "react-redux";
-import { useEffect } from "react";
 
+// Create a drawer navigator
 const Drawer = createDrawerNavigator();
 
+// Options for the stack navigator screens
 const screenOptions = {
   headerTintColor: "#fff",
   headerStyle: { backgroundColor: "#5637DD" },
 };
 
+// Home navigator with a stack navigator
 const HomeNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -54,6 +62,7 @@ const HomeNavigator = () => {
   );
 };
 
+// Directory navigator with a stack navigator
 const DirectoryNavigator = () => {
   const Stack = createStackNavigator();
   return (
@@ -82,6 +91,7 @@ const DirectoryNavigator = () => {
   );
 };
 
+// About navigator with a stack navigator
 const AboutNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -105,6 +115,7 @@ const AboutNavigator = () => {
   );
 };
 
+// Contact navigator with a stack navigator
 const ContactNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -129,6 +140,7 @@ const ContactNavigator = () => {
   );
 };
 
+// Reservation navigator with a stack navigator
 const ReservationNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -153,6 +165,7 @@ const ReservationNavigator = () => {
   );
 };
 
+// Favorites navigator with a stack navigator
 const FavoritesNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -177,6 +190,7 @@ const FavoritesNavigator = () => {
   );
 };
 
+// Login navigator with a stack navigator
 const LoginNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -200,6 +214,7 @@ const LoginNavigator = () => {
   );
 };
 
+// Custom drawer content component
 const CustomDrawerContent = (props) => (
   <DrawerContentScrollView {...props}>
     <View style={styles.drawerHeader}>
@@ -214,9 +229,11 @@ const CustomDrawerContent = (props) => (
   </DrawerContentScrollView>
 );
 
+// Main component that sets up the drawer navigator
 const Main = () => {
   const dispatch = useDispatch();
 
+  // Fetch data from Redux store when component mounts
   useEffect(() => {
     dispatch(fetchCampsites());
     dispatch(fetchPromotions());
@@ -224,6 +241,7 @@ const Main = () => {
     dispatch(fetchComments());
   }, [dispatch]);
 
+  // Return the main view with the drawer navigator
   return (
     <View
       style={{
@@ -352,6 +370,7 @@ const Main = () => {
   );
 };
 
+// Styles for Main component
 const styles = StyleSheet.create({
   drawerHeader: {
     backgroundColor: "#5637DD",
