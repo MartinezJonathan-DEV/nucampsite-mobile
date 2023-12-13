@@ -1,22 +1,31 @@
 import { useEffect, useState } from "react";
-import { View, Button, StyleSheet } from "react-native";
-import { CheckBox, Input } from "react-native-elements";
+import { View, StyleSheet, ScrollView } from "react-native";
+import { CheckBox, Input, Button, Icon } from "react-native-elements";
 import * as SecureStore from "expo-secure-store";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-// LoginScreen component handles user login input and authentication.
-const LoginScreen = () => {
-  // State variables to manage username, password, and "Remember Me" checkbox status.
+/**
+ * LoginTab component provides a login form with username, password, and remember me checkbox.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Object} props.navigation - Navigation object for navigating between screens.
+ */
+const LoginTab = ({ navigation }) => {
+  // State variables for handling user input
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
 
-  // Handle login button press.
+  /**
+   * Handles the login process.
+   * Saves user info in SecureStore if "Remember Me" is checked.
+   */
   const handleLogin = () => {
     console.log("username:", username);
     console.log("password:", password);
     console.log("remember:", remember);
 
-    // Save or delete user info based on "Remember Me" status.
+    // Save user info in SecureStore if "Remember Me" is checked
     if (remember) {
       SecureStore.setItemAsync(
         "userinfo",
@@ -26,13 +35,14 @@ const LoginScreen = () => {
         })
       ).catch((error) => console.log("Could not save user info", error));
     } else {
+      // Delete user info from SecureStore if "Remember Me" is unchecked
       SecureStore.deleteItemAsync("userinfo").catch((error) =>
         console.log("Could not delete user info", error)
       );
     }
   };
 
-  // Load stored user info when component mounts.
+  // Load saved user info on component mount
   useEffect(() => {
     SecureStore.getItemAsync("userinfo").then((userdata) => {
       const userinfo = JSON.parse(userdata);
@@ -71,13 +81,92 @@ const LoginScreen = () => {
         containerStyle={styles.formCheckbox}
       />
       <View style={styles.formButton}>
-        <Button onPress={() => handleLogin()} title="Login" color="#5637DD" />
+        <Button
+          onPress={() => handleLogin()}
+          title="Login"
+          color="#5637DD"
+          icon={
+            <Icon
+              name="sign-in"
+              type="font-awesome"
+              color="#fff"
+              iconStyle={{ marginRight: 10 }}
+            />
+          }
+          buttonStyle={{ backgroundColor: "#5637DD" }}
+        />
+      </View>
+      <View style={styles.formButton}>
+        <Button
+          onPress={() => navigation.navigate("Register")}
+          title="Register"
+          type="clear"
+          icon={
+            <Icon
+              name="user-plus"
+              type="font-awesome"
+              color="blue"
+              iconStyle={{ marginRight: 10 }}
+            />
+          }
+          titleStyle={{ color: "blue" }}
+        />
       </View>
     </View>
   );
 };
 
-// Styles for the LoginScreen component.
+/**
+ * RegisterTab component provides a registration form.
+ */
+const RegisterTab = () => {
+  return <ScrollView></ScrollView>;
+};
+
+/**
+ * LoginScreen component displays a tab navigator with login and registration tabs.
+ */
+const Tab = createBottomTabNavigator();
+
+const LoginScreen = () => {
+  // Options for the tab bar appearance
+  const tabBarOptions = {
+    activeBackgroundColor: "#5637DD",
+    inactiveBackgroundColor: "#CEC8FF",
+    activeTintColor: "#fff",
+    inactiveTintColor: "#808080",
+    labelStyle: { fontSize: 16 },
+  };
+
+  return (
+    <Tab.Navigator tabBarOptions={tabBarOptions}>
+      <Tab.Screen
+        name="Login"
+        component={LoginTab}
+        options={{
+          tabBarIcon: (props) => {
+            return (
+              <Icon name="sign-in" type="font-awesome" color={props.color} />
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name="Register"
+        component={RegisterTab}
+        options={{
+          tabBarIcon: (props) => {
+            return (
+              <Icon name="user-plus" type="font-awesome" color={props.color} />
+            );
+          },
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
+
+// Styles for the components
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",

@@ -10,6 +10,7 @@ import {
 } from "@react-navigation/drawer";
 import { Icon } from "react-native-elements";
 import logo from "../assets/images/logo.png";
+import { getFocusedRouteNameFromRoute } from "@react-navigation/core";
 
 // Importing screen components
 import CampsiteInfoScreen from "./CampsiteInfoScreen";
@@ -28,16 +29,16 @@ import { fetchPromotions } from "../features/promotions/promotionsSlice";
 import { fetchComments } from "../features/comments/commentsSlice";
 import { useDispatch } from "react-redux";
 
-// Create a drawer navigator
+// Create Drawer navigator
 const Drawer = createDrawerNavigator();
 
-// Options for the stack navigator screens
+// Shared screen options for the Stack Navigator
 const screenOptions = {
   headerTintColor: "#fff",
   headerStyle: { backgroundColor: "#5637DD" },
 };
 
-// Home navigator with a stack navigator
+// Home Navigator
 const HomeNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -62,7 +63,7 @@ const HomeNavigator = () => {
   );
 };
 
-// Directory navigator with a stack navigator
+// Directory Navigator
 const DirectoryNavigator = () => {
   const Stack = createStackNavigator();
   return (
@@ -91,7 +92,7 @@ const DirectoryNavigator = () => {
   );
 };
 
-// About navigator with a stack navigator
+// About Navigator
 const AboutNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -115,7 +116,7 @@ const AboutNavigator = () => {
   );
 };
 
-// Contact navigator with a stack navigator
+// Contact Navigator
 const ContactNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -140,7 +141,7 @@ const ContactNavigator = () => {
   );
 };
 
-// Reservation navigator with a stack navigator
+// Reservation Navigator
 const ReservationNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -165,7 +166,7 @@ const ReservationNavigator = () => {
   );
 };
 
-// Favorites navigator with a stack navigator
+// Favorites Navigator
 const FavoritesNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -190,7 +191,7 @@ const FavoritesNavigator = () => {
   );
 };
 
-// Login navigator with a stack navigator
+// Login Navigator
 const LoginNavigator = () => {
   const Stack = createStackNavigator();
 
@@ -199,10 +200,17 @@ const LoginNavigator = () => {
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={({ navigation }) => ({
+        options={({ navigation, route }) => ({
+          // Set header title dynamically based on the focused route
+          headerTitle: getFocusedRouteNameFromRoute(route),
+          // Set header left icon based on the focused route
           headerLeft: () => (
             <Icon
-              name="sign-in"
+              name={
+                getFocusedRouteNameFromRoute(route) === "Register"
+                  ? "user-plus"
+                  : "sign-in"
+              }
               type="font-awesome"
               iconStyle={styles.stackIcon}
               onPress={() => navigation.toggleDrawer()}
@@ -214,7 +222,12 @@ const LoginNavigator = () => {
   );
 };
 
-// Custom drawer content component
+/**
+ * Custom Drawer Content component to be displayed in the drawer.
+ * Overrides the default DrawerContentScrollView and DrawerItemList components.
+ * @param {Object} props - Props passed to the component.
+ * @returns {JSX.Element} - Customized Drawer content.
+ */
 const CustomDrawerContent = (props) => (
   <DrawerContentScrollView {...props}>
     <View style={styles.drawerHeader}>
@@ -229,11 +242,15 @@ const CustomDrawerContent = (props) => (
   </DrawerContentScrollView>
 );
 
-// Main component that sets up the drawer navigator
+/**
+ * Main component that renders the entire application.
+ * Initializes the Drawer Navigator and fetches data using Redux.
+ * @returns {JSX.Element} - Main application component.
+ */
 const Main = () => {
   const dispatch = useDispatch();
 
-  // Fetch data from Redux store when component mounts
+  // Fetch data using Redux actions when the component mounts.
   useEffect(() => {
     dispatch(fetchCampsites());
     dispatch(fetchPromotions());
@@ -241,7 +258,6 @@ const Main = () => {
     dispatch(fetchComments());
   }, [dispatch]);
 
-  // Return the main view with the drawer navigator
   return (
     <View
       style={{
@@ -370,7 +386,7 @@ const Main = () => {
   );
 };
 
-// Styles for Main component
+// Styles
 const styles = StyleSheet.create({
   drawerHeader: {
     backgroundColor: "#5637DD",
