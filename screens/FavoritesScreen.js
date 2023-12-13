@@ -14,13 +14,26 @@ import Loading from "../components/LoadingComponent";
 import { baseUrl } from "../shared/baseUrl";
 import { toggleFavorite } from "../features/favorites/favoritesSlice";
 
+/**
+ * FavoritesScreen component displays the users favorite campsites
+ * with the ability to delete favorites using swipe gestures.
+ *
+ * @param {Object} navigation - Navigation prop for navigating between screens.
+ */
 const FavoritesScreen = ({ navigation }) => {
+  // Redux state and dispatch
   const { campsitesArray, isLoading, errMess } = useSelector(
     (state) => state.campsites
   );
   const favorites = useSelector((state) => state.favorites);
   const dispatch = useDispatch();
 
+  /**
+   * Renders an individual favorite campsite item.
+   *
+   * @param {Object} item - The campsite data for the rendered item.
+   * @returns {JSX.Element} - Rendered component for the favorite campsite.
+   */
   const renderFavoriteItem = ({ item: campsite }) => {
     return (
       <SwipeRow rightOpenValue={-100}>
@@ -73,9 +86,12 @@ const FavoritesScreen = ({ navigation }) => {
     );
   };
 
+  // Loading state
   if (isLoading) {
     return <Loading />;
   }
+
+  // Error state
   if (errMess) {
     return (
       <View>
@@ -83,6 +99,8 @@ const FavoritesScreen = ({ navigation }) => {
       </View>
     );
   }
+
+  // Render the FavoritesScreen
   return (
     <Animatable.View animation="fadeInRightBig" duration={2000}>
       <FlatList
@@ -96,6 +114,7 @@ const FavoritesScreen = ({ navigation }) => {
   );
 };
 
+// Styles for the FavoritesScreen component
 const styles = StyleSheet.create({
   deleteView: {
     flexDirection: "row",

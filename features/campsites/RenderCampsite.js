@@ -1,10 +1,25 @@
 import { useRef } from "react";
-import { StyleSheet, Text, View, PanResponder, Alert } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  PanResponder,
+  Alert,
+  Share,
+} from "react-native";
 import { Card, Icon } from "react-native-elements";
 import * as Animatable from "react-native-animatable";
 import { baseUrl } from "../../shared/baseUrl";
 
-// RenderCampsite component displays details of a campsite in a card
+/**
+ * RenderCampsite component displays details of a campsite in a card with interactive gestures.
+ *
+ * @param {Object} props - Component properties.
+ * @param {Object} props.campsite - Campsite data to display.
+ * @param {boolean} props.isFavorite - Indicates if the campsite is a favorite.
+ * @param {Function} props.markFavorite - Function to mark/unmark the campsite as a favorite.
+ * @param {Function} props.onShowModal - Function to show a modal for additional details.
+ */
 const RenderCampsite = (props) => {
   const { campsite } = props;
 
@@ -60,6 +75,26 @@ const RenderCampsite = (props) => {
     },
   });
 
+  /**
+   * Shares campsite details using the device's native sharing functionality.
+   *
+   * @param {string} title - Title of the campsite.
+   * @param {string} message - Description or additional message about the campsite.
+   * @param {string} url - URL of the campsite image.
+   */
+  const shareCampsite = (title, message, url) => {
+    Share.share(
+      {
+        title,
+        message: `${title}: ${message} ${url}`,
+        url,
+      },
+      {
+        dialogTitle: "Share " + title,
+      }
+    );
+  };
+
   // Check if the campsite object exists
   if (campsite) {
     // Animate the card's entrance using Animatable.View
@@ -98,6 +133,20 @@ const RenderCampsite = (props) => {
               raised
               reverse
               onPress={() => props.onShowModal()}
+            />
+            <Icon
+              name="share"
+              type="font-awesome"
+              color="#5637DD"
+              raised
+              reverse
+              onPress={() =>
+                shareCampsite(
+                  campsite.name,
+                  campsite.description,
+                  baseUrl + campsite.image
+                )
+              }
             />
           </View>
         </Card>
