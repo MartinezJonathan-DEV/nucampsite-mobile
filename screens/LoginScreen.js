@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, ScrollView, Image } from "react-native";
 import { CheckBox, Input, Button, Icon } from "react-native-elements";
-import * as SecureStore from "expo-secure-store";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import * as ImagePciker from "expo-image-picker";
 import { baseUrl } from "../shared/baseUrl";
 import logo from "../assets/images/logo.png";
+import * as SecureStore from "expo-secure-store";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
+import * as MediaLibrary from "expo-media-library";
 
 /**
  * LoginTab component provides a login form with username, password, and remember me checkbox.
@@ -171,19 +173,69 @@ const RegisterTab = () => {
    */
   const getImageFromCamera = async () => {
     // Request camera permissions
-    const cameraPermission = await ImagePciker.requestCameraPermissionsAsync();
+    const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
 
     // Check if camera permissions are granted
     if (cameraPermission.status === "granted") {
       // Launch camera to capture an image
-      const capturedImage = await ImagePciker.launchCameraAsync({
+      const capturedImage = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
         aspect: [1, 1],
       });
+
       // Set the captured image as the user's profile picture
       if (capturedImage.assets) {
         console.log(capturedImage.assets[0]);
-        setImageUrl(capturedImage.assets[0].uri);
+        const processedImage = await processImage(capturedImage.assets[0].uri);
+        setImageUrl(processedImage);
+
+        // Save image to library
+        MediaLibrary.saveToLibraryAsync(capturedImage.assets[0]);
+      }
+    }
+  };
+
+  /**
+   * Processes the selected image by resizing it and converting it to PNG format.
+   * The processed image URI is then set as the user's profile picture.
+   *
+   * @param {string} imgUri - The URI of the image to be processed.
+   */
+  const processImage = async (imgUri) => {
+    // Resize and convert the image to PNG format
+    const processedImage = await ImageManipulator.manipulateAsync(
+      imgUri,
+      [{ resize: { width: 400 } }],
+      { format: ImageManipulator.SaveFormat.PNG }
+    );
+    console.log(processedImage);
+
+    // Set the processed image as the user's profile picture
+    setImageUrl(processedImage.uri);
+  };
+
+  /**
+   * Launches the device's image gallery to select an image.
+   * The selected image is then processed and set as the user's profile picture.
+   * Requires media library permissions.
+   */
+  const getImageFromGallery = async () => {
+    // Request media library permissions
+    const mediaLibraryPermissions =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    // Check if media library permissions are granted
+    if (mediaLibraryPermissions.status === "granted") {
+      // Launch image gallery to select an image
+      const capturedImage = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+
+      // Process and set the selected image as the users profile picture
+      if (capturedImage.assets) {
+        console.log(capturedImage.assets[0]);
+        processImage(capturedImage.assets[0].uri);
       }
     }
   };
@@ -199,6 +251,7 @@ const RegisterTab = () => {
             style={styles.image}
           />
           <Button title="Camera" onPress={getImageFromCamera} />
+          <Button title="Gallery" onPress={getImageFromGallery} />
         </View>
         <Input
           placeholder="Username"

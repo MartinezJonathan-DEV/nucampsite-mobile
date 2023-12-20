@@ -266,24 +266,47 @@ const Main = () => {
     dispatch(fetchComments());
   }, [dispatch]);
 
-  useEffect(() => {
-    NetInfo.fetch().then((connectionInfo) => {
-      Platform.OS === "ios"
-        ? Alert.alert("Initial Network Connectivity Type:", connectionInfo)
-        : ToastAndroid.show(
-            "Initial Network Connectivity: " + connectionInfo.type,
-            ToastAndroid.LONG
-          );
-    });
+  /**
+   * Initializes and subscribes to network connectivity changes using NetInfo.
+   * Displays an alert or toast indicating the initial network connectivity type.
+   * Unsubscribes from network connectivity changes on component unmount.
+   */
 
+  useEffect(() => {
+    // Show initial network information
+    showNetInfo();
+
+    // Subscribe to network connectivity changes
     const unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
       handleConnectivityChange(connectionInfo);
     });
 
+    // Unsubscribe from network connectivity changes on component unmount
     return unsubscribeNetInfo;
   }, []);
 
+  /**
+   * Displays an alert or toast indicating the current network connectivity type.
+   * Invoked initially to show the initial network connectivity type.
+   */
+  const showNetInfo = async () => {
+    // Fetch and display initial network information
+    const connectionInfo = await NetInfo.fetch();
+    Platform.OS === "ios"
+      ? Alert.alert("Initial Network Connectivity Type:", connectionInfo)
+      : ToastAndroid.show(
+          "Initial Network Connectivity: " + connectionInfo.type,
+          ToastAndroid.LONG
+        );
+  };
+
+  /**
+   * Handles changes in network connectivity and displays corresponding alerts or toasts.
+   *
+   * @param {object} connectionInfo - Object containing information about the current network connection.
+   */
   const handleConnectivityChange = (connectionInfo) => {
+    // Display messages based on the current network connection type
     let connectionMsg = "You are now connected to an active network.";
     switch (connectionInfo.type) {
       case "none":
